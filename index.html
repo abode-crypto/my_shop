@@ -3,27 +3,9 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
-    <!-- ============================================ -->
-    <!--  وسوم المعاينة على السوشيال ميديا (Open Graph) -->
-    <!-- ============================================ -->
-    <meta property="og:title" content="متجري - تسوق أحدث المنتجات" />
-    <meta property="og:description" content="أكبر متجر إلكتروني يعرض أحدث المنتجات مع صور حقيقية. تسوق الآن!" />
-    <!-- ⚠️ استبدل هذا الرابط بصورة شعارك أو صورة مميزة (يفضل 1200x630) -->
-    <meta property="og:image" content="https://res.cloudinary.com/eptk4swl/image/upload/v1/logo-shop.jpg" />
-    <meta property="og:url" content="https://your-site.com/" />
-    <meta property="og:type" content="website" />
-    
-    <!-- وسوم خاصة بتويتر -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="متجري - تسوق أحدث المنتجات" />
-    <meta name="twitter:description" content="أكبر متجر إلكتروني يعرض أحدث المنتجات مع صور حقيقية." />
-    <meta name="twitter:image" content="https://res.cloudinary.com/eptk4swl/image/upload/v1/logo-shop.jpg" />
-
-    <title>متجري - روابط حقيقية</title>
+    <title>متجري - رفع احترافي Cloudinary</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
-        /* ---------- جميع الأنماط (نفسها تماماً) ---------- */
         * {
             margin: 0;
             padding: 0;
@@ -110,10 +92,12 @@
             color: #27ae60;
             font-weight: 600;
         }
-        #mainPage, #newPage {
+        #mainPage,
+        #newPage {
             display: none;
         }
-        #mainPage.active-page, #newPage.active-page {
+        #mainPage.active-page,
+        #newPage.active-page {
             display: block;
         }
         .section-title {
@@ -543,13 +527,11 @@
 </head>
 <body>
 
-    <!-- ========== شريط التنقل ========== -->
     <div class="navbar">
         <div class="logo">متجري <span>✦</span></div>
         <div class="nav-links">
             <a href="#home" id="linkHome">الرئيسية</a>
             <a href="#new" id="linkNew">الجديد</a>
-            
             <span class="admin-buttons">
                 <span id="adminStatus" class="admin-status"></span>
                 <button id="loginBtn" class="admin-btn admin-login" onclick="adminLogin()">
@@ -565,7 +547,6 @@
         </div>
     </div>
 
-    <!-- ========== الصفحة الرئيسية ========== -->
     <div id="mainPage">
         <div class="section-title">
             جميع المنتجات <small>استعراض الكتالوج كاملاً</small>
@@ -573,7 +554,6 @@
         <div class="products-grid" id="productContainer"></div>
     </div>
 
-    <!-- ========== صفحة أحدث الإضافات ========== -->
     <div id="newPage">
         <a href="#home" class="back-btn">
             <i class="fas fa-arrow-right"></i> العودة إلى الرئيسية
@@ -584,7 +564,6 @@
         <div class="products-grid" id="newProductContainer"></div>
     </div>
 
-    <!-- ========== صفحة التفاصيل ========== -->
     <div id="detailPage">
         <a href="#home" class="back-btn">
             <i class="fas fa-arrow-right"></i> العودة إلى الرئيسية
@@ -625,25 +604,19 @@
         </div>
     </div>
 
-    <!-- ========== النموذج المنبثق ========== -->
     <div class="modal-overlay" id="productModal">
         <div class="modal-box">
             <button class="close-modal" onclick="closeModal()">&times;</button>
             <h2 id="modalTitle">إضافة منتج جديد</h2>
             <input type="hidden" id="editId" value="" />
-
             <label>اسم المنتج</label>
             <input type="text" id="fName" placeholder="مثل: فستان صيفي طويل" />
-
             <label>المواصفات</label>
             <input type="text" id="fSpecs" placeholder="مثل: قطن 100% · مقاسات S-XXL" />
-
             <label>السعر ($)</label>
             <input type="number" id="fPrice" placeholder="89.00" step="0.01" />
-
             <label>السعر القديم (اختياري)</label>
             <input type="number" id="fOldPrice" placeholder="145.00" step="0.01" />
-
             <label>صورة المنتج (ارفع من جهازك)</label>
             <div class="file-upload-wrapper">
                 <input type="file" id="fImg" accept="image/*" />
@@ -651,10 +624,8 @@
             <div class="image-preview-container">
                 <img id="imagePreview" src="#" alt="معاينة الصورة" style="display: none;" />
             </div>
-
             <label>الوصف التفصيلي</label>
             <textarea id="fDesc" placeholder="اكتب وصفاً مفصلاً للمنتج..."></textarea>
-
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="closeModal()">إلغاء</button>
                 <button class="btn-save" id="saveProductBtn" onclick="saveProduct()">حفظ المنتج</button>
@@ -664,13 +635,13 @@
 
     <script>
         // ============================================================
-        //  بيانات Cloudinary الخاصة بك
+        // بيانات Cloudinary الخاصة بك
         // ============================================================
         const CLOUD_NAME = 'eptk4swl';
-        const UPLOAD_PRESET = 'my_shop_preset'; // ⚠️ استبدل هذا
+        const UPLOAD_PRESET = 'my_shop_preset'; // هذا هو الاسم الصحيح
 
         // ============================================================
-        //  قاعدة البيانات
+        // قاعدة البيانات
         // ============================================================
         const STORAGE_KEY = 'myShopProducts';
         const ADMIN_PASSWORD = 'admin123';
@@ -744,7 +715,7 @@
         }
 
         // ============================================================
-        //  دوال تبديل الصفحات
+        // دوال تبديل الصفحات
         // ============================================================
         function switchToMain() {
             document.getElementById('mainPage').classList.add('active-page');
@@ -753,7 +724,6 @@
             renderProducts();
             document.getElementById('linkHome').classList.add('active-link');
             document.getElementById('linkNew').classList.remove('active-link');
-            // تحديث عنوان الصفحة للمعاينة
             document.title = 'متجري - جميع المنتجات';
         }
 
@@ -778,9 +748,7 @@
             document.getElementById('detailPage').classList.add('active-page');
             document.getElementById('linkHome').classList.remove('active-link');
             document.getElementById('linkNew').classList.remove('active-link');
-            
-            // تحديث عنوان الصفحة ليتناسب مع المنتج (مفيد للمعاينة)
-            document.title = `${product.name} - متجري`;
+            document.title = product.name + ' - متجري';
 
             document.getElementById('detailImg').src = product.img;
             document.getElementById('detailImg').onerror = function() { this.src = 'https://via.placeholder.com/600x700?text=صورة+غير+موجودة'; };
@@ -794,12 +762,8 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // ============================================================
-        //  نظام الروابط (الموجه)
-        // ============================================================
         function navigate() {
             const hash = window.location.hash.slice(1) || 'home';
-            
             if (hash === 'home') {
                 switchToMain();
             } else if (hash === 'new') {
@@ -819,7 +783,7 @@
         window.addEventListener('hashchange', navigate);
 
         // ============================================================
-        //  عرض المنتجات
+        // عرض المنتجات
         // ============================================================
         function renderProducts() {
             const container = document.getElementById('productContainer');
@@ -876,7 +840,7 @@
         }
 
         // ============================================================
-        //  نظام الأدمن (نفسه)
+        // نظام الأدمن
         // ============================================================
         function adminLogin() {
             const pass = prompt('🔐 أدخل كلمة سر الأدمن:');
@@ -901,7 +865,7 @@
         }
 
         // ============================================================
-        //  معاينة الصورة
+        // معاينة الصورة
         // ============================================================
         document.getElementById('fImg').addEventListener('change', function(e) {
             const preview = document.getElementById('imagePreview');
@@ -915,7 +879,7 @@
         });
 
         // ============================================================
-        //  حفظ المنتج
+        // حفظ المنتج مع رفع الصورة إلى Cloudinary
         // ============================================================
         async function saveProduct() {
             if (!isAdmin) return;
@@ -939,6 +903,7 @@
                 if (existingProduct) finalImage = existingProduct.img;
             }
 
+            // رفع الصورة إلى Cloudinary إذا اختار المستخدم ملفاً جديداً
             if (fileInput.files && fileInput.files[0]) {
                 const file = fileInput.files[0];
                 const formData = new FormData();
@@ -952,10 +917,12 @@
                             body: formData
                         }
                     );
+
                     if (!response.ok) {
                         const errorData = await response.json();
                         throw new Error(errorData.error?.message || 'فشل الرفع إلى Cloudinary');
                     }
+
                     const data = await response.json();
                     finalImage = data.secure_url;
                 } catch (error) {
@@ -985,11 +952,11 @@
             else { renderProducts();
                 renderNewProducts(); }
             closeModal();
-            alert('✅ تم حفظ المنتج بنجاح!');
+            alert('✅ تم حفظ المنتج بنجاح في السحابة!');
         }
 
         // ============================================================
-        //  عمليات الحذف والإضافة والتعديل
+        // عمليات الحذف والإضافة والتعديل
         // ============================================================
         function deleteProduct(id) {
             if (!isAdmin) return;
@@ -1050,7 +1017,7 @@
         });
 
         // ============================================================
-        //  خيارات الألوان والمقاسات
+        // خيارات الألوان والمقاسات
         // ============================================================
         document.addEventListener('click', function(e) {
             if (e.target.classList.contains('color-circle')) {
@@ -1064,7 +1031,7 @@
         });
 
         // ============================================================
-        //  بدء التشغيل
+        // بدء التشغيل
         // ============================================================
         loadProducts();
 
@@ -1075,8 +1042,8 @@
         }
 
         updateAdminUI();
-        console.log('✅ الموقع جاهز للمشاركة على السوشيال ميديا!');
-        console.log('📌 استبدل رابط الصورة (og:image) بشعارك الخاص.');
+        console.log('✅ الموقع جاهز مع Cloudinary!');
+        console.log('📌 اسم الـ Preset: my_shop_preset');
     </script>
 
 </body>
