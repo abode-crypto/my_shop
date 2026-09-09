@@ -4,15 +4,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>متجري - متجر الأزياء</title>
-    <!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-    <!-- سكربت Cloudinary Widget (لرفع الصور) -->
+
+    <!-- Cloudinary Widget -->
     <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
-    
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
     <style>
-        /* ---------- جميع الأنماط ---------- */
+        /* ---------- كل الأنماط ثابتة كما هي (لم نغير شيئاً) ---------- */
         * {
             margin: 0;
             padding: 0;
@@ -99,10 +102,12 @@
             color: #27ae60;
             font-weight: 600;
         }
-        #mainPage, #newPage {
+        #mainPage,
+        #newPage {
             display: none;
         }
-        #mainPage.active-page, #newPage.active-page {
+        #mainPage.active-page,
+        #newPage.active-page {
             display: block;
         }
         .section-title {
@@ -230,8 +235,14 @@
             display: block;
         }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         .back-btn {
             background: none;
@@ -336,7 +347,8 @@
             cursor: pointer;
             transition: 0.2s;
         }
-        .color-circle:hover, .color-circle.active {
+        .color-circle:hover,
+        .color-circle.active {
             border-color: #222;
             transform: scale(1.1);
         }
@@ -355,7 +367,8 @@
             font-weight: 500;
             transition: 0.2s;
         }
-        .size-btn:hover, .size-btn.active {
+        .size-btn:hover,
+        .size-btn.active {
             border-color: #222;
             background: #222;
             color: white;
@@ -401,7 +414,8 @@
             margin-bottom: 4px;
             color: #333;
         }
-        .modal-box input, .modal-box textarea {
+        .modal-box input,
+        .modal-box textarea {
             width: 100%;
             padding: 10px 14px;
             border: 1px solid #ddd;
@@ -409,7 +423,8 @@
             font-size: 14px;
             transition: 0.2s;
         }
-        .modal-box input:focus, .modal-box textarea:focus {
+        .modal-box input:focus,
+        .modal-box textarea:focus {
             outline: none;
             border-color: #ff3b6f;
             box-shadow: 0 0 0 3px rgba(255, 59, 111, 0.1);
@@ -486,15 +501,37 @@
             color: #222;
         }
         @media (max-width: 600px) {
-            .navbar { flex-direction: column; text-align: center; }
-            .nav-links { justify-content: center; gap: 12px; }
-            .admin-buttons { flex-wrap: wrap; justify-content: center; }
-            .products-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-            .product-img { height: 180px; }
-            #detailPage { padding: 16px; }
-            .detail-wrapper { flex-direction: column; }
-            .detail-info h1 { font-size: 22px; }
-            .modal-box { padding: 20px; }
+            .navbar {
+                flex-direction: column;
+                text-align: center;
+            }
+            .nav-links {
+                justify-content: center;
+                gap: 12px;
+            }
+            .admin-buttons {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            .product-img {
+                height: 180px;
+            }
+            #detailPage {
+                padding: 16px;
+            }
+            .detail-wrapper {
+                flex-direction: column;
+            }
+            .detail-info h1 {
+                font-size: 22px;
+            }
+            .modal-box {
+                padding: 20px;
+            }
         }
     </style>
 </head>
@@ -608,26 +645,70 @@
 
     <script>
         // ============================================================
-        // بيانات Cloudinary الخاصة بك
+        //  تهيئة Firebase (بياناتك الخاصة)
+        // ============================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyC8vP2yomDlFaROapc-5hgSXhU",
+            authDomain: "myshop-53b22.firebaseapp.com",
+            projectId: "myshop-53b22",
+            storageBucket: "myshop-53b22.firebasestorage.googleapis.com",
+            messagingSenderId: "824962407277",
+            appId: "1:824962407277:web:f79d1a730c13ac98ea1864",
+            measurementId: "G-2CXDB5P1X7"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // ============================================================
+        //  بيانات Cloudinary
         // ============================================================
         const CLOUD_NAME = 'eptk4swl';
         const UPLOAD_PRESET = 'my_shop_preset';
 
         // ============================================================
-        // قاعدة البيانات
+        //  المتغيرات الأساسية
         // ============================================================
-        const STORAGE_KEY = 'myShopProducts';
-        const ADMIN_PASSWORD = 'admin123';
-
         let products = [];
         let isAdmin = false;
 
+        // ============================================================
+        //  تحميل البيانات من Firebase
+        // ============================================================
         function loadProducts() {
-            const stored = localStorage.getItem(STORAGE_KEY);
-            if (stored) {
-                try { products = JSON.parse(stored); return; } catch (e) {}
-            }
-            // بيانات افتراضية (روابط صور من الإنترنت)
+            database.ref('products').once('value').then((snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    products = data;
+                    renderAll();
+                    updateAdminUI();
+                    console.log('✅ تم تحميل البيانات من Firebase');
+                } else {
+                    setDefaultProducts();
+                }
+            }).catch((error) => {
+                console.error('⚠️ فشل تحميل البيانات من Firebase:', error);
+                setDefaultProducts();
+            });
+        }
+
+        // ============================================================
+        //  حفظ البيانات إلى Firebase
+        // ============================================================
+        function saveToStorage() {
+            database.ref('products').set(products)
+                .then(() => {
+                    console.log('✅ تم حفظ البيانات في Firebase');
+                })
+                .catch((error) => {
+                    alert('⚠️ فشل حفظ البيانات في السحابة: ' + error.message);
+                });
+        }
+
+        // ============================================================
+        //  تعيين المنتجات الافتراضية (عند أول تشغيل)
+        // ============================================================
+        function setDefaultProducts() {
             products = [{
                 id: 1,
                 name: "فستان صيفي طويل بقصة A",
@@ -678,10 +759,9 @@
                 description: "حقيبة ظهر أنيقة من الجلد الطبيعي الفاخر."
             }];
             saveToStorage();
-        }
-
-        function saveToStorage() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
+            renderAll();
+            updateAdminUI();
+            console.log('✅ تم تعيين المنتجات الافتراضية وحفظها في Firebase');
         }
 
         function generateId() {
@@ -689,7 +769,7 @@
         }
 
         // ============================================================
-        // دوال تبديل الصفحات
+        //  دوال تبديل الصفحات
         // ============================================================
         function switchToMain() {
             document.getElementById('mainPage').classList.add('active-page');
@@ -728,25 +808,25 @@
             document.getElementById('detailPrice').innerText = `$${product.price.toFixed(2)}`;
             document.getElementById('detailDesc').innerText = product.description;
             const oldPriceEl = document.getElementById('detailOldPrice');
-            if (product.oldPrice) { oldPriceEl.innerText = `$${product.oldPrice.toFixed(2)}`; oldPriceEl.style.display = 'inline'; } else { oldPriceEl.style.display = 'none'; }
+            if (product.oldPrice) { oldPriceEl.innerText = `$${product.oldPrice.toFixed(2)}`;
+                oldPriceEl.style.display = 'inline'; } else { oldPriceEl.style.display = 'none'; }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function navigate() {
             const hash = window.location.hash.slice(1) || 'home';
-            if (hash === 'home') { switchToMain(); } 
-            else if (hash === 'new') { switchToNew(); } 
-            else if (hash.startsWith('detail-')) {
+            if (hash === 'home') { switchToMain(); } else if (hash === 'new') { switchToNew(); } else if (hash
+                .startsWith('detail-')) {
                 const id = parseInt(hash.split('-')[1]);
-                if (!isNaN(id) && products.find(p => p.id === id)) { switchToDetail(id); } 
-                else { window.location.hash = 'home'; }
+                if (!isNaN(id) && products.find(p => p.id === id)) { switchToDetail(id); } else { window.location
+                        .hash = 'home'; }
             } else { window.location.hash = 'home'; }
         }
 
         window.addEventListener('hashchange', navigate);
 
         // ============================================================
-        // عرض المنتجات
+        //  عرض المنتجات
         // ============================================================
         function renderProducts() {
             const container = document.getElementById('productContainer');
@@ -801,15 +881,26 @@
         }
 
         // ============================================================
-        // وظائف الأدمن (الحفظ باستخدام Cloudinary Widget)
+        //  وظائف الأدمن
         // ============================================================
         function adminLogin() {
             const pass = prompt('🔐 أدخل كلمة سر الأدمن:');
-            if (pass === ADMIN_PASSWORD) { isAdmin = true; updateAdminUI(); renderAll(); alert('✅ مرحباً أيها الأدمن!'); } 
-            else if (pass !== null) { alert('❌ كلمة سر خاطئة!'); }
+            if (pass === 'admin123') {
+                isAdmin = true;
+                updateAdminUI();
+                renderAll();
+                alert('✅ مرحباً أيها الأدمن!');
+            } else if (pass !== null) {
+                alert('❌ كلمة سر خاطئة!');
+            }
         }
 
-        function adminLogout() { isAdmin = false; updateAdminUI(); renderAll(); alert('👋 تم الخروج.'); }
+        function adminLogout() {
+            isAdmin = false;
+            updateAdminUI();
+            renderAll();
+            alert('👋 تم الخروج.');
+        }
 
         function updateAdminUI() {
             document.getElementById('loginBtn').style.display = isAdmin ? 'none' : 'inline-block';
@@ -818,19 +909,22 @@
             document.getElementById('adminStatus').innerHTML = isAdmin ? '🛡️ أدمن' : '';
         }
 
-        // معاينة الصورة
+        // ============================================================
+        //  معاينة الصورة
+        // ============================================================
         document.getElementById('fImg').addEventListener('change', function(e) {
             const preview = document.getElementById('imagePreview');
             const file = this.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function(event) { preview.src = event.target.result; preview.style.display = 'block'; };
+                reader.onload = function(event) { preview.src = event.target.result;
+                    preview.style.display = 'block'; };
                 reader.readAsDataURL(file);
             } else { preview.style.display = 'none'; }
         });
 
         // ============================================================
-        // حفظ المنتج (باستخدام Cloudinary Widget)
+        //  حفظ المنتج (باستخدام Cloudinary Widget + Firebase)
         // ============================================================
         function saveProduct() {
             if (!isAdmin) return;
@@ -851,7 +945,7 @@
             let isEdit = false;
             if (editId) { isEdit = true; }
 
-            // إذا كان تعديل ولم يرفع صورة جديدة -> حفظ البيانات فقط
+            // تعديل بدون رفع صورة جديدة
             if (isEdit && !fileInput.files[0]) {
                 const index = products.findIndex(p => p.id === parseInt(editId));
                 if (index === -1) return;
@@ -863,15 +957,14 @@
                 return;
             }
 
-            // إذا كان إضافة جديدة ولم يرفع صورة
+            // إضافة جديدة بدون صورة
             if (!isEdit && !fileInput.files[0]) {
                 alert('⚠️ يرجى رفع صورة للمنتج الجديد.');
                 return;
             }
 
-            // فتح نافذة رفع Cloudinary
-            const widget = cloudinary.createUploadWidget(
-                {
+            // فتح نافذة Cloudinary
+            const widget = cloudinary.createUploadWidget({
                     cloudName: CLOUD_NAME,
                     uploadPreset: UPLOAD_PRESET,
                     sources: ['local', 'url', 'camera'],
@@ -890,9 +983,11 @@
                         if (isEdit) {
                             const index = products.findIndex(p => p.id === parseInt(editId));
                             if (index === -1) return;
-                            products[index] = { ...products[index], name, specs, price, oldPrice, img: finalImage, description };
+                            products[index] = { ...products[index], name, specs, price, oldPrice, img: finalImage,
+                                description };
                         } else {
-                            const newProduct = { id: generateId(), name, specs, price, oldPrice, img: finalImage, description };
+                            const newProduct = { id: generateId(), name, specs, price, oldPrice, img: finalImage,
+                                description };
                             products.push(newProduct);
                         }
 
@@ -907,30 +1002,32 @@
             widget.open();
         }
 
-        // دالة إعادة رسم كل الصفحات للتحديث الفوري
+        // ============================================================
+        //  إعادة رسم كل الصفحات بعد التحديث
+        // ============================================================
         function renderAll() {
             renderProducts();
             renderNewProducts();
-            // تحديث صفحة التفاصيل إذا كانت مفتوحة
             const hash = window.location.hash.slice(1) || 'home';
             if (hash.startsWith('detail-')) {
                 const id = parseInt(hash.split('-')[1]);
                 const product = products.find(p => p.id === id);
                 if (product) {
                     document.getElementById('detailImg').src = product.img;
+                    document.getElementById('detailImg').onerror = function() { this.src = 'https://via.placeholder.com/600x700?text=صورة+غير+موجودة'; };
                     document.getElementById('detailName').innerText = product.name;
                     document.getElementById('detailSpecs').innerHTML = `<i class="fas fa-tag"></i> ${product.specs}`;
                     document.getElementById('detailPrice').innerText = `$${product.price.toFixed(2)}`;
                     document.getElementById('detailDesc').innerText = product.description;
                     const oldPriceEl = document.getElementById('detailOldPrice');
-                    if (product.oldPrice) { oldPriceEl.innerText = `$${product.oldPrice.toFixed(2)}`; oldPriceEl.style.display = 'inline'; } 
-                    else { oldPriceEl.style.display = 'none'; }
+                    if (product.oldPrice) { oldPriceEl.innerText = `$${product.oldPrice.toFixed(2)}`;
+                        oldPriceEl.style.display = 'inline'; } else { oldPriceEl.style.display = 'none'; }
                 }
             }
         }
 
         // ============================================================
-        // عمليات الحذف والإضافة
+        //  عمليات الحذف والإضافة
         // ============================================================
         function deleteProduct(id) {
             if (!isAdmin) return;
@@ -940,8 +1037,7 @@
             products = products.filter(p => p.id !== id);
             saveToStorage();
             const currentHash = window.location.hash.slice(1) || 'home';
-            if (currentHash === 'detail-' + id) { window.location.hash = 'home'; } 
-            else { renderAll(); }
+            if (currentHash === 'detail-' + id) { window.location.hash = 'home'; } else { renderAll(); }
             alert(`✅ تم حذف "${product.name}" بنجاح!`);
         }
 
@@ -971,8 +1067,8 @@
             document.getElementById('fOldPrice').value = product.oldPrice || '';
             document.getElementById('fDesc').value = product.description;
             const preview = document.getElementById('imagePreview');
-            if (product.img) { preview.src = product.img; preview.style.display = 'block'; } 
-            else { preview.style.display = 'none'; }
+            if (product.img) { preview.src = product.img;
+                preview.style.display = 'block'; } else { preview.style.display = 'none'; }
             document.getElementById('fImg').value = '';
             document.getElementById('productModal').classList.add('show');
         }
@@ -999,7 +1095,7 @@
         });
 
         // ============================================================
-        // بدء التشغيل
+        //  بدء التشغيل
         // ============================================================
         loadProducts();
 
@@ -1010,8 +1106,7 @@
         }
 
         updateAdminUI();
-        console.log('✅ الموقع جاهز مع Cloudinary Widget!');
-        console.log('📌 صورة المنتج: ' + products[0]?.img);
+        console.log('✅ الموقع يعمل الآن مع Firebase + Cloudinary!');
     </script>
 
 </body>
